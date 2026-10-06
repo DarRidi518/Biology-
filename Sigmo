@@ -1,0 +1,110 @@
+# ==========================================
+# ЗАДАНИЕ 1: Реализация структуры и обходов
+# ==========================================
+
+def inorder_traversal(node):
+    """Симметричный обход (In-order): Лево -> Корень -> Право"""
+    if node is None:
+        return []
+    # Рекурсивно обходим левое поддерево, добавляем корень, обходим правое
+    return inorder_traversal(node['left']) + [node['val']] + inorder_traversal(node['right'])
+
+def preorder_traversal(node):
+    """Прямой обход (Pre-order): Корень -> Лево -> Право"""
+    if node is None:
+        return []
+    # Сначала корень, потом левое, потом правое
+    return [node['val']] + preorder_traversal(node['left']) + preorder_traversal(node['right'])
+
+def postorder_traversal(node):
+    """Обратный обход (Post-order): Лево -> Право -> Корень"""
+    if node is None:
+        return []
+    # Сначала левое, потом правое, потом корень
+    return postorder_traversal(node['left']) + postorder_traversal(node['right']) + [node['val']]
+
+# ==========================================
+# ЗАДАНИЕ 2: Инвертирование дерева
+# ==========================================
+
+def invert_tree(node):
+    """
+    Инвертирует бинарное дерево.
+    Меняет местами левого и правого потомка для каждого узла.
+    """
+    if node is None:
+        return None
+    
+    # Меняем местами ссылки на левого и правого ребенка
+    node['left'], node['right'] = node['right'], node['left']
+    
+    # Рекурсивно применяем ту же операцию к потомкам
+    invert_tree(node['left'])
+    invert_tree(node['right'])
+    
+    return node
+
+def tree_to_list_level_order(node):
+    """
+    Вспомогательная функция для вывода дерева в виде массива (по уровням).
+    Нужна для проверки результата Задания 2.
+    """
+    if node is None:
+        return []
+    
+    result = []
+    queue = [node]
+    
+    while queue:
+        current = queue.pop(0)
+        if current:
+            result.append(current['val'])
+            queue.append(current['left'])
+            queue.append(current['right'])
+        else:
+            result.append(None)
+            
+    # Убираем лишние None в конце
+    while result and result[-1] is None:
+        result.pop()
+        
+    return result
+
+# ==========================================
+# ПРИМЕР ИСПОЛЬЗОВАНИЯ
+# ==========================================
+
+if __name__ == "__main__":
+    # Создаем дерево из примера с помощью словарей:
+    #      4
+    #    /   \
+    #   2     7
+    #  / \   / \
+    # 1   3 6   9
+    
+    root = {
+        'val': 4,
+        'left': {
+            'val': 2,
+            'left': {'val': 1, 'left': None, 'right': None},
+            'right': {'val': 3, 'left': None, 'right': None}
+        },
+        'right': {
+            'val': 7,
+            'left': {'val': 6, 'left': None, 'right': None},
+            'right': {'val': 9, 'left': None, 'right': None}
+        }
+    }
+
+    print("--- Задание 1: Обходы дерева ---")
+    print(f"Симметричный (In-order): {inorder_traversal(root)}")
+    print(f"Прямой (Pre-order):      {preorder_traversal(root)}")
+    print(f"Обратный (Post-order):   {postorder_traversal(root)}")
+
+    print("\n--- Задание 2: Инвертирование ---")
+    print(f"Исходное дерево (массив): {tree_to_list_level_order(root)}")
+    
+    # Инвертируем
+    inverted_root = invert_tree(root)
+    
+    print(f"Инвертированное дерево:   {tree_to_list_level_order(inverted_root)}")
